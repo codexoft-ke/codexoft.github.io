@@ -21,7 +21,7 @@ git commit -m "$commit_message"
 # Push to each remote
 for remote in "${remotes[@]}"; do
   echo "Pushing to $remote..."
-  git push "$remote" main -f
+  git push "$remote" main
 done
 
 echo "Push completed to all repositories."
