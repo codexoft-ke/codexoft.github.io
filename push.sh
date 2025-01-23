@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# List of remotes
-remotes=("me" "tech")
+# List of remotes and their corresponding CNAME content
+declare -A remote_cnames
+remote_cnames["me"]="codexoft.me"
+remote_cnames["tech"]="codexoft.tech"
 
 # Commit message passed as an argument
 commit_message=$1
@@ -12,16 +14,19 @@ if [ -z "$commit_message" ]; then
   exit 1
 fi
 
-# Stage all changes
-git add .
-
-# Commit changes
-git commit -m "$commit_message"
-
-# Push to each remote
-for remote in "${remotes[@]}"; do
+# Push to each remote with appropriate CNAME
+for remote in "${!remote_cnames[@]}"; do
+  echo "Setting up CNAME for $remote..."
+  echo "${remote_cnames[$remote]}" > CNAME
+  
+  # Stage CNAME and all changes
+  git add .
+  
+  # Commit changes
+  git commit -m "$commit_message"
+  
   echo "Pushing to $remote..."
-  git push "$remote" main
+  git push "$remote" main -f
 done
 
 echo "Push completed to all repositories."
